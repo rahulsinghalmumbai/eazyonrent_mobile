@@ -24,5 +24,5 @@ public partial class CustomToastControl : ContentPage
             ToastFrame.IsVisible = false;
         }
     }
-}
+
 }

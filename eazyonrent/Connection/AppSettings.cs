@@ -11,5 +11,6 @@ namespace eazyonrent.Connection
     {
         public const string GetAllCat = "Categories/GellALLCategories";
         public const string GetGuestItem = "Lister/GetGuestItems";
+        public const string GetItemDetailsById = "Lister/GetItemById";
     }
 }
