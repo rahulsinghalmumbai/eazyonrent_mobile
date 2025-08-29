@@ -1,9 +1,4 @@
-﻿using Java.Util.Zip;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 
 namespace eazyonrent.Connection
 {
@@ -16,5 +11,6 @@ namespace eazyonrent.Connection
     {
         public const string GetAllCat = "Categories/GellALLCategories";
         public const string GetGuestItem = "Lister/GetGuestItems";
+        public const string GetItemDetailsById = "Lister/GetItemById";
     }
 }
