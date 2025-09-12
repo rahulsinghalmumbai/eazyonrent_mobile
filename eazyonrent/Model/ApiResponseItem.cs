@@ -18,4 +18,10 @@ namespace eazyonrent.Model
         public string? ResponseMessage { get; set; }
         public T? CategoriesList { get; set; }
     }
+    public class ListerItemProfileResponse
+    {
+        public string ResponseCode { get; set; }
+        public string ResponseMessage { get; set; }
+        public List<ListerItemProfileResult> ItemList { get; set; } = new();
+    }
 }

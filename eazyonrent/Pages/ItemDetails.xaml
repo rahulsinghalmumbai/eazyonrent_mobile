@@ -4,23 +4,24 @@
              x:Class="eazyonrent.Pages.ItemDetails"
              Title="Item Details"
              BackgroundColor="#F8F9FA">
+    <Grid RowDefinitions="*,Auto">
 
-    <ScrollView>
-        <VerticalStackLayout Spacing="20" Padding="16">
+        <ScrollView>
+            <VerticalStackLayout Spacing="20" Padding="16">
 
-            <!-- Image Gallery Section -->
-            <Frame BackgroundColor="White" CornerRadius="15" HasShadow="True" Padding="16">
-                <VerticalStackLayout Spacing="15">
-                    <!-- Main Image Display -->
-                    <Frame CornerRadius="10" HasShadow="False" Padding="0" HeightRequest="300">
-                        <Grid>
-                            <Image x:Name="MainImage" 
+                <!-- Image Gallery Section -->
+                <Frame BackgroundColor="White" CornerRadius="15" HasShadow="True" Padding="16">
+                    <VerticalStackLayout Spacing="15">
+                        <!-- Main Image Display -->
+                        <Frame CornerRadius="10" HasShadow="False" Padding="0" HeightRequest="300">
+                            <Grid>
+                                <Image x:Name="MainImage" 
                                    Source="{Binding CurrentImage}"
                                    Aspect="AspectFill"
                                    BackgroundColor="#F0F0F0"/>
 
-                            <!-- Navigation Buttons -->
-                            <Button x:Name="PrevButton" 
+                                <!-- Navigation Buttons -->
+                                <Button x:Name="PrevButton" 
                                     Text="❮" 
                                     BackgroundColor="White" 
                                     TextColor="Black"
@@ -32,7 +33,7 @@
                                     Margin="10,0,0,0"
                                     Clicked="OnPrevImageClicked"/>
 
-                            <Button x:Name="NextButton" 
+                                <Button x:Name="NextButton" 
                                     Text="❯" 
                                     BackgroundColor="White" 
                                     TextColor="Black"
@@ -44,29 +45,29 @@
                                     Margin="0,0,10,0"
                                     Clicked="OnNextImageClicked"/>
 
-                            <!-- Zoom Controls -->
-                            <VerticalStackLayout HorizontalOptions="End" 
+                                <!-- Zoom Controls -->
+                                <VerticalStackLayout HorizontalOptions="End" 
                                                VerticalOptions="End" 
                                                Spacing="5" 
                                                Margin="10">
-                                <Button Text="🔍+" 
+                                    <Button Text="🔍+" 
                                         BackgroundColor="White" 
                                         TextColor="Black"
                                         WidthRequest="40" 
                                         HeightRequest="40"
                                         CornerRadius="20"
                                         Clicked="OnZoomInClicked"/>
-                                <Button Text="🔍-" 
+                                    <Button Text="🔍-" 
                                         BackgroundColor="White" 
                                         TextColor="Black"
                                         WidthRequest="40" 
                                         HeightRequest="40"
                                         CornerRadius="20"
                                         Clicked="OnZoomOutClicked"/>
-                            </VerticalStackLayout>
+                                </VerticalStackLayout>
 
-                            <!-- Image Counter -->
-                            <Label x:Name="ImageCounter"
+                                <!-- Image Counter -->
+                                <Label x:Name="ImageCounter"
                                    Text="{Binding ImageCounterText}"
                                    BackgroundColor="Black" 
                                    TextColor="White"
@@ -75,179 +76,181 @@
                                    VerticalOptions="End"
                                    Margin="10"
                                    FontSize="12"/>
-                        </Grid>
-                    </Frame>
+                            </Grid>
+                        </Frame>
 
-                    <!-- Thumbnail Strip -->
-                    <CollectionView x:Name="ThumbnailCollection" 
+                        <!-- Thumbnail Strip -->
+                        <CollectionView x:Name="ThumbnailCollection" 
                                     ItemsSource="{Binding ItemImages}"
                                     ItemsLayout="HorizontalList"
                                     HeightRequest="80"
                                     SelectionMode="Single"
                                     SelectionChanged="OnThumbnailSelectionChanged">
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate>
-                                <Grid Padding="5">
-                                    <Frame CornerRadius="8" HasShadow="False" Padding="0">
-                                        <Image Source="{Binding .}" 
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Padding="5">
+                                        <Frame CornerRadius="8" HasShadow="False" Padding="0">
+                                            <Image Source="{Binding .}" 
                                                WidthRequest="70" 
                                                HeightRequest="70"
                                                Aspect="AspectFill"/>
-                                    </Frame>
-                                </Grid>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
-                </VerticalStackLayout>
-            </Frame>
+                                        </Frame>
+                                    </Grid>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Frame>
 
-            <!-- Category Selection -->
-            <Frame BackgroundColor="White" CornerRadius="15" HasShadow="True" Padding="16">
-                <VerticalStackLayout Spacing="10">
-                    <Label Text="Category" FontSize="16" FontAttributes="Bold" TextColor="#333"/>
-                    <Picker x:Name="CategoryPicker" 
+                <!-- Category Selection -->
+                <Frame BackgroundColor="White" CornerRadius="15" HasShadow="True" Padding="16">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Category" FontSize="16" FontAttributes="Bold" TextColor="#333"/>
+                        <Picker x:Name="CategoryPicker" 
                             ItemsSource="{Binding Categories}"
                             ItemDisplayBinding="{Binding CategoriesName}"
                             SelectedItem="{Binding SelectedCategory}"
                             BackgroundColor="#F8F9FA"
                             TextColor="#333"/>
-                </VerticalStackLayout>
-            </Frame>
-
-            <!-- Item Information -->
-            <Frame BackgroundColor="White" CornerRadius="15" HasShadow="True" Padding="16">
-                <VerticalStackLayout Spacing="15">
-
-                    <!-- Company Name -->
-                    <VerticalStackLayout Spacing="5">
-                        <Label Text="Company Name:" FontSize="14" TextColor="#666"/>
-                        <Label Text="{Binding ItemData.CompanyName}" FontSize="18" FontAttributes="Bold" TextColor="#333"/>
                     </VerticalStackLayout>
+                </Frame>
 
-                    <!-- Item Name -->
-                    <VerticalStackLayout Spacing="5">
-                        <Label Text="Item Name:" FontSize="14" TextColor="#666"/>
-                        <Label Text="{Binding ItemData.ItemName}" FontSize="22" FontAttributes="Bold" TextColor="#1E40AF"/>
-                    </VerticalStackLayout>
+                <!-- Item Information -->
+                <Frame BackgroundColor="White" CornerRadius="15" HasShadow="True" Padding="16">
+                    <VerticalStackLayout Spacing="15">
 
-                    <!-- Description -->
-                    <VerticalStackLayout Spacing="5">
-                        <Label Text="Description:" FontSize="14" TextColor="#666"/>
-                        <Label Text="{Binding ItemData.ItemDescriptions}" FontSize="16" TextColor="#333" LineBreakMode="WordWrap"/>
-                    </VerticalStackLayout>
-
-                    <!-- Cost -->
-                    <VerticalStackLayout Spacing="5">
-                        <Label Text="Cost:" FontSize="14" TextColor="#666"/>
-                        <Label Text="{Binding ItemCost}" FontSize="28" FontAttributes="Bold" TextColor="#059669"/>
-                    </VerticalStackLayout>
-
-                    <!-- Available From -->
-                    <VerticalStackLayout Spacing="5">
-                        <Label Text="Available From:" FontSize="14" TextColor="#666"/>
-                        <Label Text="{Binding Availablefrom}" FontSize="16" TextColor="#333"/>
-                    </VerticalStackLayout>
-
-                    <!-- Location -->
-                    <VerticalStackLayout Spacing="5">
-                        <Label Text="Location:" FontSize="14" TextColor="#666"/>
-                        <Label Text="{Binding ItemData.Location}" FontSize="16" TextColor="#333"/>
-                    </VerticalStackLayout>
-
-                    <!-- Booking Status -->
-                    <VerticalStackLayout Spacing="5">
-                        <Label Text="Status:" FontSize="14" TextColor="#666"/>
-                        <Frame BackgroundColor="#DCFCE7" CornerRadius="20" HasShadow="False" Padding="12,6">
-                            <Label Text="Available" TextColor="#166534" FontAttributes="Bold" HorizontalOptions="Center"/>
-                        </Frame>
-                    </VerticalStackLayout>
-
-                    <!-- Rating and Views -->
-                    <Grid ColumnDefinitions="*,*" ColumnSpacing="20">
-                        <VerticalStackLayout Grid.Column="0" Spacing="5">
-                            <Label Text="Rating:" FontSize="14" TextColor="#666"/>
-                            <HorizontalStackLayout Spacing="5">
-                                <Label Text="⭐⭐⭐⭐⭐" FontSize="18"/>
-                                <Label Text="Very Good" FontSize="14" TextColor="#666" VerticalOptions="Center"/>
-                            </HorizontalStackLayout>
+                        <!-- Company Name -->
+                        <VerticalStackLayout Spacing="5">
+                            <Label Text="Company Name:" FontSize="14" TextColor="#666"/>
+                            <Label Text="{Binding ItemData.CompanyName}" FontSize="18" FontAttributes="Bold" TextColor="#333"/>
                         </VerticalStackLayout>
 
-                        <VerticalStackLayout Grid.Column="1" Spacing="5">
-                            <Label Text="Views:" FontSize="14" TextColor="#666"/>
-                            <Label Text="{Binding viewCount}" FontSize="16" TextColor="#333"/>
+                        <!-- Item Name -->
+                        <VerticalStackLayout Spacing="5">
+                            <Label Text="Item Name:" FontSize="14" TextColor="#666"/>
+                            <Label Text="{Binding ItemData.ItemName}" FontSize="22" FontAttributes="Bold" TextColor="#1E40AF"/>
                         </VerticalStackLayout>
-                    </Grid>
 
-                </VerticalStackLayout>
-            </Frame>
+                        <!-- Description -->
+                        <VerticalStackLayout Spacing="5">
+                            <Label Text="Description:" FontSize="14" TextColor="#666"/>
+                            <Label Text="{Binding ItemData.ItemDescriptions}" FontSize="16" TextColor="#333" LineBreakMode="WordWrap"/>
+                        </VerticalStackLayout>
 
-            <!-- Similar Items Section -->
-            <Frame BackgroundColor="White" CornerRadius="15" HasShadow="True" Padding="16">
-                <VerticalStackLayout Spacing="15">
-                    <Label Text="Similar Items" FontSize="20" FontAttributes="Bold" TextColor="#333"/>
+                        <!-- Cost -->
+                        <VerticalStackLayout Spacing="5">
+                            <Label Text="Cost:" FontSize="14" TextColor="#666"/>
+                            <Label Text="{Binding ItemCost}" FontSize="28" FontAttributes="Bold" TextColor="#059669"/>
+                        </VerticalStackLayout>
 
-                    <CollectionView x:Name="SimilarItemsCollection" 
+                        <!-- Available From -->
+                        <VerticalStackLayout Spacing="5">
+                            <Label Text="Available From:" FontSize="14" TextColor="#666"/>
+                            <Label Text="{Binding Availablefrom}" FontSize="16" TextColor="#333"/>
+                        </VerticalStackLayout>
+
+                        <!-- Location -->
+                        <VerticalStackLayout Spacing="5">
+                            <Label Text="Location:" FontSize="14" TextColor="#666"/>
+                            <Label Text="{Binding ItemData.Location}" FontSize="16" TextColor="#333"/>
+                        </VerticalStackLayout>
+
+                        <!-- Booking Status -->
+                        <VerticalStackLayout Spacing="5">
+                            <Label Text="Status:" FontSize="14" TextColor="#666"/>
+                            <Frame BackgroundColor="#DCFCE7" CornerRadius="20" HasShadow="False" Padding="12,6">
+                                <Label Text="Available" TextColor="#166534" FontAttributes="Bold" HorizontalOptions="Center"/>
+                            </Frame>
+                        </VerticalStackLayout>
+
+                        <!-- Rating and Views -->
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="20">
+                            <VerticalStackLayout Grid.Column="0" Spacing="5">
+                                <Label Text="Rating:" FontSize="14" TextColor="#666"/>
+                                <HorizontalStackLayout Spacing="5">
+                                    <Label Text="⭐⭐⭐⭐⭐" FontSize="18"/>
+                                    <Label Text="Very Good" FontSize="14" TextColor="#666" VerticalOptions="Center"/>
+                                </HorizontalStackLayout>
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Grid.Column="1" Spacing="5">
+                                <Label Text="Views:" FontSize="14" TextColor="#666"/>
+                                <Label Text="{Binding viewCount}" FontSize="16" TextColor="#333"/>
+                            </VerticalStackLayout>
+                        </Grid>
+
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- Similar Items Section -->
+                <Frame BackgroundColor="White" CornerRadius="15" HasShadow="True" Padding="16">
+                    <VerticalStackLayout Spacing="15">
+                        <Label Text="Similar Items" FontSize="20" FontAttributes="Bold" TextColor="#333"/>
+
+                        <CollectionView x:Name="SimilarItemsCollection" 
                                     ItemsSource="{Binding SimilarItems}"
                                     ItemsLayout="HorizontalList"
                                     HeightRequest="200">
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate>
-                                <Grid Padding="10" WidthRequest="180">
-                                    <Frame BackgroundColor="#F8F9FA" CornerRadius="10" HasShadow="True" Padding="12">
-                                        <VerticalStackLayout Spacing="10">
-                                            <Image Source="{Binding Images[0]}" 
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Padding="10" WidthRequest="180">
+                                        <Frame BackgroundColor="#F8F9FA" CornerRadius="10" HasShadow="True" Padding="12">
+                                            <VerticalStackLayout Spacing="10">
+                                                <Image Source="{Binding Images[0]}" 
                                                    WidthRequest="140" 
                                                    HeightRequest="100"
                                                    Aspect="AspectFill"/>
-                                            <Label Text="{Binding ItemName}" 
+                                                <Label Text="{Binding ItemName}" 
                                                    FontSize="14" 
                                                    FontAttributes="Bold" 
                                                    TextColor="#333"
                                                    LineBreakMode="TailTruncation"/>
-                                            <Label Text="{Binding ItemCost, StringFormat='₹{0}'}" 
+                                                <Label Text="{Binding ItemCost, StringFormat='₹{0}'}" 
                                                    FontSize="16" 
                                                    FontAttributes="Bold" 
                                                    TextColor="#059669"/>
-                                        </VerticalStackLayout>
-                                    </Frame>
+                                            </VerticalStackLayout>
+                                        </Frame>
 
-                                    <!-- Tap Gesture for Similar Items -->
-                                    <Grid.GestureRecognizers>
-                                        <TapGestureRecognizer Tapped="OnSimilarItemTapped" 
+                                        <!-- Tap Gesture for Similar Items -->
+                                        <Grid.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnSimilarItemTapped" 
                                                               CommandParameter="{Binding .}"/>
-                                    </Grid.GestureRecognizers>
-                                </Grid>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
-                </VerticalStackLayout>
-            </Frame>
+                                        </Grid.GestureRecognizers>
+                                    </Grid>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Frame>
 
-            <!-- Action Buttons -->
-            <Frame BackgroundColor="White" CornerRadius="15" HasShadow="True" Padding="16">
-                <Grid ColumnDefinitions="*,*" ColumnSpacing="15">
-                    <Button Grid.Column="0"
-                            Text="💬 Chat"
-                            BackgroundColor="#3B82F6"
-                            TextColor="White"
-                            FontSize="18"
-                            FontAttributes="Bold"
-                            HeightRequest="50"
-                            CornerRadius="25"
-                            Clicked="OnChatClicked"/>
+                <!-- Action Buttons -->
 
-                    <Button Grid.Column="1"
-                            Text="📅 Book Now"
-                            BackgroundColor="#059669"
-                            TextColor="White"
-                            FontSize="18"
-                            FontAttributes="Bold"
-                            HeightRequest="50"
-                            CornerRadius="25"
-                            Clicked="OnBookNowClicked"/>
-                </Grid>
-            </Frame>
 
-        </VerticalStackLayout>
-    </ScrollView>
+            </VerticalStackLayout>
+        </ScrollView>
+        <Frame BackgroundColor="White" HasShadow="True" Padding="16" Grid.Row="1">
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="15">
+                <Button Grid.Column="0"
+                  Text="💬 Chat"
+                  BackgroundColor="#3B82F6"
+                  TextColor="White"
+                  FontSize="18"
+                  FontAttributes="Bold"
+                  HeightRequest="50"
+                  CornerRadius="25"
+                  Clicked="OnChatClicked"/>
+
+                <Button Grid.Column="1"
+                  Text="📅 Book Now"
+                  BackgroundColor="#059669"
+                  TextColor="White"
+                  FontSize="18"
+                  FontAttributes="Bold"
+                  HeightRequest="50"
+                  CornerRadius="25"
+                  Clicked="OnBookNowClicked"/>
+            </Grid>
+        </Frame>
+    </Grid>
 </ContentPage>
