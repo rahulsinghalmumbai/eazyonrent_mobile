@@ -155,7 +155,6 @@ public partial class ItemDetails : ContentPage, INotifyPropertyChanged
                 return;
             }
 
-            // Ek hi item chahiye to first le lo
             var item = response.ItemList.FirstOrDefault();
             if (item == null)
             {
@@ -164,7 +163,6 @@ public partial class ItemDetails : ContentPage, INotifyPropertyChanged
                 return;
             }
 
-            // Clear and reload images
             ItemImages.Clear();
             if (item.Images?.Any() == true)
             {
@@ -182,7 +180,6 @@ public partial class ItemDetails : ContentPage, INotifyPropertyChanged
                 CurrentImage = ItemImages.FirstOrDefault();
             }
 
-            // ViewModel ki property me assign
             this.ItemData = item;
 
             RefreshAllProperties();
@@ -213,7 +210,6 @@ public partial class ItemDetails : ContentPage, INotifyPropertyChanged
                     Categories.Add(category);
                 }
 
-                // Set selected category based on item's category
                 if (ItemData?.CategoryId.HasValue == true)
                 {
                     SelectedCategory = Categories.FirstOrDefault(c => c.Id == ItemData.CategoryId.Value);
@@ -403,6 +399,7 @@ public partial class ItemDetails : ContentPage, INotifyPropertyChanged
         try
         {
             await DisplayAlert("Book Now", $"Booking {ItemName}...", "OK");
+            await Navigation.PushAsync(new BookItemPage(_itemId, _listerId));
             // Navigate to booking page: await Shell.Current.GoToAsync($"//booking?itemId={_itemId}&listerId={_listerId}");
         }
         catch (Exception ex)

@@ -248,13 +248,37 @@ public partial class GuesPage : ContentPage, INotifyPropertyChanged
             await Navigation.PushAsync(new ItemDetails(item.ListerId, item.ListerItemId));
             }
     }
+    private async void OnHomeClicked(object sender, EventArgs e)
+    {
+        await Navigation.PushAsync(new GuesPage());
+    }
+    private async void OnSearchClicked(object sender, EventArgs e)
+    {
+        SearchEntry.Focus();
+        await DisplayAlert("Navigation", "Search clicked!", "OK");
 
+    }
+    private async void OnAddItemClicked(object sender, EventArgs e)
+    {
+        await DisplayAlert("Navigation", "Add Item clicked!", "OK");
+
+    }
+    private async void OnProfileClicked(object sender, EventArgs e)
+    {
+        //    await DisplayAlert("Navigation", "Profile clicked!", "OK");
+        await Navigation.PushAsync(new UserProfilePage());
+
+    }
     private async void OnLoadMoreItems(object sender, EventArgs e)
     {
         // Implement pagination if needed
         await Task.Delay(100);
     }
+    private async void OnOrdersClicked(object sender, EventArgs e)
+    {
+        await DisplayAlert("Navigation", "Orders clicked!", "OK");
 
+    }
     public event PropertyChangedEventHandler PropertyChanged;
 
     protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
@@ -263,10 +287,3 @@ public partial class GuesPage : ContentPage, INotifyPropertyChanged
     }
 }
 
-// API Response Model
-public class ApiResponse
-{
-    public string ResponseCode { get; set; }
-    public string ResponseMessage { get; set; }
-    public List<ListerItemResult> ItemList { get; set; }
-}
