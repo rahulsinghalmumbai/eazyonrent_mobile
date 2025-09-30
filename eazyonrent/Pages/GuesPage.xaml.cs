@@ -62,20 +62,26 @@ public partial class GuesPage : ContentPage, INotifyPropertyChanged
         try
         {
             IsLoading = true;
-
             var apiResponse = await _guestServices.GetGuestItemsAsync();
-
             if (apiResponse != null && apiResponse.ResponseCode == "000" && apiResponse.ItemList != null)
             {
                 Items.Clear();
-
                 foreach (var item in apiResponse.ItemList)
                 {
                     if (string.IsNullOrEmpty(item.Location))
                         item.Location = "Noida";
 
-                    // Add dummy images for scrolling
-                    item.Images = GetDummyImagesForCategory(item.CategoryId ?? 0);
+                    if (item.ItemImageList != null && item.ItemImageList.Count > 0)
+                    {
+                        item.Images = item.ItemImageList
+                            .Where(img => !string.IsNullOrEmpty(img.ImageName))
+                            .Select(img => img.ImageName)
+                            .ToList();
+                    }
+                    else
+                    {
+                        item.Images = GetDummyImagesForCategory(item.CategoryId ?? 0);
+                    }
 
                     Items.Add(item);
                 }
@@ -260,7 +266,10 @@ public partial class GuesPage : ContentPage, INotifyPropertyChanged
     }
     private async void OnAddItemClicked(object sender, EventArgs e)
     {
-        await DisplayAlert("Navigation", "Add Item clicked!", "OK");
+        //await DisplayAlert("Navigation", "Add Item clicked!", "OK");
+        IsBusy = true;
+        await Navigation.PushAsync(new AddItemPage());
+        IsBusy = false;
 
     }
     private async void OnProfileClicked(object sender, EventArgs e)

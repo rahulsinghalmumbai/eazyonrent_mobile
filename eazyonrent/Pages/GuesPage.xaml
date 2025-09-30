@@ -244,9 +244,7 @@
                 <StackLayout Grid.Column="2" 
                              Spacing="2"
                              VerticalOptions="Center">
-                    <StackLayout.GestureRecognizers>
-                        <TapGestureRecognizer Tapped="OnAddItemClicked"/>
-                    </StackLayout.GestureRecognizers>
+                   
 
                     <Frame BackgroundColor="#FF6B35" 
                            CornerRadius="25" 
@@ -255,6 +253,9 @@
                            Padding="0"
                            HorizontalOptions="Center"
                            HasShadow="True">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnAddItemClicked"/>
+                        </Frame.GestureRecognizers>
                         <Label Text="+" 
                                FontSize="28" 
                                FontAttributes="Bold"

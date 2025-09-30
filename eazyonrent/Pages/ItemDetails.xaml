@@ -190,7 +190,7 @@
                         <CollectionView x:Name="SimilarItemsCollection" 
                                     ItemsSource="{Binding SimilarItems}"
                                     ItemsLayout="HorizontalList"
-                                    HeightRequest="200">
+                                    HeightRequest="220">
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
                                     <Grid Padding="10" WidthRequest="180">
@@ -208,15 +208,17 @@
                                                 <Label Text="{Binding ItemCost, StringFormat='₹{0}'}" 
                                                    FontSize="16" 
                                                    FontAttributes="Bold" 
+                                                   HorizontalTextAlignment="End"
                                                    TextColor="#059669"/>
                                             </VerticalStackLayout>
+                                            <!-- Tap Gesture for Similar Items -->
+                                            <Frame.GestureRecognizers>
+                                                <TapGestureRecognizer Tapped="OnSimilarItemTapped" 
+                      CommandParameter="{Binding .}"/>
+                                            </Frame.GestureRecognizers>
                                         </Frame>
 
-                                        <!-- Tap Gesture for Similar Items -->
-                                        <Grid.GestureRecognizers>
-                                            <TapGestureRecognizer Tapped="OnSimilarItemTapped" 
-                                                              CommandParameter="{Binding .}"/>
-                                        </Grid.GestureRecognizers>
+                                        
                                     </Grid>
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>

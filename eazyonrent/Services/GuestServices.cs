@@ -112,6 +112,33 @@ namespace eazyonrent.Services
             }
         }
 
+        public async Task<ApiResponseItem<List<ListerItemResult>>> LoadSimilarItemsAsync(int? cat)
+        {
+            try
+            {
+                var url = $"{Endpoints.SimilarItems}?CategoryId={cat}";
+                var response = await _httpClient.GetAsync(url);
+
+                if (!response.IsSuccessStatusCode)
+                    return null;
+
+                var jsonContent = await response.Content.ReadAsStringAsync();
+
+                var apiResponse = JsonSerializer.Deserialize<ApiResponseItem<List<ListerItemResult>>>(
+                    jsonContent,
+                    new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                return apiResponse;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
     }
 
 }

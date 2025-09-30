@@ -16,5 +16,8 @@ namespace eazyonrent.Connection
         public const string EditProfile = "Lister/EditProfileById";
         public const string ProfileItem = "Lister/GetAllItem";
         public const string BookItem = "Lister/bookItem";
+        public const string SimilarItems = "Lister/GetSimilarItems";
+        public const string AddItems = "Lister/CreateItem";
+        public const string AddItmeImages = "Lister/uploadItemImages";
     }
 }
