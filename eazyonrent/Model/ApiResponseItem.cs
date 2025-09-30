@@ -24,4 +24,18 @@ namespace eazyonrent.Model
         public string ResponseMessage { get; set; }
         public List<ListerItemProfileResult> ItemList { get; set; } = new();
     }
+    public class AddItmApiResponse
+    {
+        public string ResponseCode { get; set; }
+        public string ResponseMessage { get; set; }
+        public int? ListerItemId { get; set; }
+
+
+    }
+    public class  AddItemImagesResponse
+    {
+        public string ResponseCode { get; set; }
+        public string ResponseMessage { get; set; }
+        public List<int>? ImageIds { get; set; }
+    }
 }

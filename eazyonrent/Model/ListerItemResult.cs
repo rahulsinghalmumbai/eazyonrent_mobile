@@ -9,8 +9,9 @@ namespace eazyonrent.Model
 {
     public class ListerItemResult : INotifyPropertyChanged
     {
-        private string _location = "Noida"; 
+        private string _location = "Noida";
         private List<string> _Images;
+        private List<ItemImage> _itemImageList;
 
         public int ListerItemId { get; set; }
         public string? ItemName { get; set; }
@@ -46,13 +47,31 @@ namespace eazyonrent.Model
             }
         }
 
+        // Add this property with proper backing field
+        public List<ItemImage> ItemImageList
+        {
+            get => _itemImageList;
+            set
+            {
+                _itemImageList = value;
+                OnPropertyChanged();
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+    }
 
-        //public List<ItemImageResult> ItemImageList { get; set; }
+    // Move ItemImage class outside of ListerItemResult class
+    public class ItemImage
+    {
+        public int ImageId { get; set; }
+        public int? ListerItemId { get; set; }
+        public string ImageName { get; set; }
+        public object ImageFiles { get; set; }
     }
 }

@@ -144,10 +144,8 @@ public partial class ItemDetails : ContentPage, INotifyPropertyChanged
         try
         {
             IsLoading = true;
-
             // Get API response
             var response = await _guestServices.GetItemDetailsAsync(_listerId, _itemId);
-
             if (response?.ItemList == null || !response.ItemList.Any())
             {
                 await DisplayAlert("Error", "No item details found.", "OK");
@@ -164,11 +162,17 @@ public partial class ItemDetails : ContentPage, INotifyPropertyChanged
             }
 
             ItemImages.Clear();
-            if (item.Images?.Any() == true)
-            {
-                foreach (var img in item.Images)
-                    ItemImages.Add(img);
 
+            // Extract images from itemImageList instead of Images property
+            if (item.ItemImageList?.Any() == true)
+            {
+                foreach (var imageItem in item.ItemImageList)
+                {
+                    if (!string.IsNullOrEmpty(imageItem.ImageName))
+                    {
+                        ItemImages.Add(imageItem.ImageName);
+                    }
+                }
                 CurrentImage = ItemImages.FirstOrDefault();
             }
             else
@@ -176,12 +180,18 @@ public partial class ItemDetails : ContentPage, INotifyPropertyChanged
                 var fallback = GetDummyImagesForCategory(item.CategoryId ?? 0);
                 foreach (var img in fallback)
                     ItemImages.Add(img);
-
                 CurrentImage = ItemImages.FirstOrDefault();
             }
 
-            this.ItemData = item;
+            if (item.ItemImageList?.Any() == true)
+            {
+                item.Images = item.ItemImageList
+                    .Where(img => !string.IsNullOrEmpty(img.ImageName))
+                    .Select(img => img.ImageName)
+                    .ToList();
+            }
 
+            this.ItemData = item;
             RefreshAllProperties();
         }
         catch (Exception ex)
@@ -231,7 +241,7 @@ public partial class ItemDetails : ContentPage, INotifyPropertyChanged
         try
         {
             // Load similar items from your existing guest service
-            var apiResponse = await _guestServices.GetGuestItemsAsync();
+            var apiResponse = await _guestServices.LoadSimilarItemsAsync(SelectedCategory.Id);
 
             if (apiResponse != null && apiResponse.ResponseCode == "000" && apiResponse.ItemList != null)
             {
@@ -243,13 +253,32 @@ public partial class ItemDetails : ContentPage, INotifyPropertyChanged
                     .Take(5)
                     .ToList();
 
+                //foreach (var item in similarItems)
+                //{
+                //    if (string.IsNullOrEmpty(item.Location))
+                //        item.Location = "Noida";
+
+                //    // Add dummy images for similar items
+                //    item.Images = GetDummyImagesForCategory(item.CategoryId ?? 0);
+
+                //    SimilarItems.Add(item);
+                //}
                 foreach (var item in similarItems)
                 {
                     if (string.IsNullOrEmpty(item.Location))
                         item.Location = "Noida";
 
-                    // Add dummy images for similar items
-                    item.Images = GetDummyImagesForCategory(item.CategoryId ?? 0);
+                    if (item.ItemImageList != null && item.ItemImageList.Count > 0)
+                    {
+                        item.Images = item.ItemImageList
+                            .Where(img => !string.IsNullOrEmpty(img.ImageName))
+                            .Select(img => img.ImageName)
+                            .ToList();
+                    }
+                    else
+                    {
+                        item.Images = GetDummyImagesForCategory(item.CategoryId ?? 0);
+                    }
 
                     SimilarItems.Add(item);
                 }
@@ -413,8 +442,10 @@ public partial class ItemDetails : ContentPage, INotifyPropertyChanged
         var tappedEventArgs = e as TappedEventArgs;
         if (tappedEventArgs?.Parameter is ListerItemResult similarItem)
         {
+            IsBusy = true;
             // Navigate to similar item details
             await Navigation.PushAsync(new ItemDetails(similarItem.ListerId, similarItem.ListerItemId));
+            IsBusy = false;
         }
     }
 
