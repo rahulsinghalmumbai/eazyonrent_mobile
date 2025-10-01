@@ -30,6 +30,10 @@ namespace eazyonrent.Pages
             {
                 await OnLoadItems(this, EventArgs.Empty);
             }
+            else if (this.CurrentPage != null && this.CurrentPage.Title == "History")
+            {
+                await OnLoadHistory(this, EventArgs.Empty);
+            }
         }
 
         private async Task OnLoadProfileDta(object sender, EventArgs e)
@@ -151,8 +155,56 @@ namespace eazyonrent.Pages
                 IsBusy = false;
             }
         }
+        private async Task OnLoadHistory(object sender, EventArgs e)
+        {
+            try
+            {
+                IsBusy = true;
+                var historyList = await loginServices.GetBookingHistoryAsync(_currentListerId);
 
-
+                if (historyList != null && historyList.Count > 0)
+                {
+                    HistoryCollectionView.ItemsSource = historyList;
+                    NoHistoryLabel.IsVisible = false;
+                    HistoryCollectionView.IsVisible = true;
+                }
+                else
+                {
+                    NoHistoryLabel.IsVisible = true;
+                    HistoryCollectionView.IsVisible = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Error", $"Failed to load history: {ex.Message}", "OK");
+                NoHistoryLabel.IsVisible = true;
+                HistoryCollectionView.IsVisible = false;
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+        private async void OnHistoryItemTapped(object sender, EventArgs e)
+        {
+            try
+            {
+                IsBusy = true;
+                var tappedEventArgs = e as TappedEventArgs;
+                if (tappedEventArgs?.Parameter is BookingHistoryItem item)
+                {
+                    await Navigation.PushAsync(new ItemDetails(item.listerId, item.itemId));
+                }
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Error", $"Failed to open item details: {ex.Message}", "OK");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
         private async void OnUploadImageClicked(object sender, EventArgs e)
         {
             try

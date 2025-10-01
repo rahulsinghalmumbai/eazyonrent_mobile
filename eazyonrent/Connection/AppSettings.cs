@@ -19,5 +19,6 @@ namespace eazyonrent.Connection
         public const string SimilarItems = "Lister/GetSimilarItems";
         public const string AddItems = "Lister/CreateItem";
         public const string AddItmeImages = "Lister/uploadItemImages";
+        public const string HistoryItme = "Lister/bookHistory";
     }
 }

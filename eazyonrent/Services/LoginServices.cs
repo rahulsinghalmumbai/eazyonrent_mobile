@@ -152,5 +152,35 @@ namespace eazyonrent.Services
             }
         }
 
+        public async Task<List<BookingHistoryItem>> GetBookingHistoryAsync(int? listerId)
+        {
+            try
+            {
+                if (!listerId.HasValue)
+                {
+                    return new List<BookingHistoryItem>();
+                }
+
+               // var url = $"https://eazyonrent.com/api/Lister/bookHistory?ListerId={32}";
+                var url = $"{Endpoints.HistoryItme}?ListerId={listerId}";
+
+                var response = await _httpClient.GetAsync(url);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    var historyList = JsonSerializer.Deserialize<List<BookingHistoryItem>>(content);
+                    return historyList ?? new List<BookingHistoryItem>();
+                }
+
+                return new List<BookingHistoryItem>();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading booking history: {ex.Message}");
+                return new List<BookingHistoryItem>();
+            }
+        }
+
     }
 }
