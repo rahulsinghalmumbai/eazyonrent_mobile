@@ -102,7 +102,7 @@
                     </VerticalStackLayout>
                 </Frame>
 
-                <!-- Category Selection -->
+                <!-- Category Selection --><!--
                 <Frame BackgroundColor="White" CornerRadius="15" HasShadow="True" Padding="16">
                     <VerticalStackLayout Spacing="10">
                         <Label Text="Category" FontSize="16" FontAttributes="Bold" TextColor="#333"/>
@@ -113,11 +113,15 @@
                             BackgroundColor="#F8F9FA"
                             TextColor="#333"/>
                     </VerticalStackLayout>
-                </Frame>
+                </Frame>-->
 
                 <!-- Item Information -->
                 <Frame BackgroundColor="White" CornerRadius="15" HasShadow="True" Padding="16">
                     <VerticalStackLayout Spacing="15">
+                        <VerticalStackLayout Spacing="5">
+                            <Label Text="Category Name:" FontSize="14" TextColor="#666"/>
+                            <Label Text="{Binding ItemData.CategoryId}" FontSize="18" FontAttributes="Bold" TextColor="#333"/>
+                        </VerticalStackLayout>
 
                         <!-- Company Name -->
                         <VerticalStackLayout Spacing="5">
@@ -140,13 +144,13 @@
                         <!-- Cost -->
                         <VerticalStackLayout Spacing="5">
                             <Label Text="Cost:" FontSize="14" TextColor="#666"/>
-                            <Label Text="{Binding ItemCost}" FontSize="28" FontAttributes="Bold" TextColor="#059669"/>
+                            <Label Text="{Binding FormattedCost}" FontSize="28" FontAttributes="Bold" TextColor="#059669"/>
                         </VerticalStackLayout>
 
                         <!-- Available From -->
                         <VerticalStackLayout Spacing="5">
                             <Label Text="Available From:" FontSize="14" TextColor="#666"/>
-                            <Label Text="{Binding Availablefrom}" FontSize="16" TextColor="#333"/>
+                            <Label Text="{Binding FormattedAvailableDate}" FontSize="16" TextColor="#333"/>
                         </VerticalStackLayout>
 
                         <!-- Location -->
@@ -175,7 +179,7 @@
 
                             <VerticalStackLayout Grid.Column="1" Spacing="5">
                                 <Label Text="Views:" FontSize="14" TextColor="#666"/>
-                                <Label Text="{Binding viewCount}" FontSize="16" TextColor="#333"/>
+                                <Label Text="{Binding ViewCount}" FontSize="16" TextColor="#333"/>
                             </VerticalStackLayout>
                         </Grid>
 

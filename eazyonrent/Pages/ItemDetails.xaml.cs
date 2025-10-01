@@ -123,7 +123,7 @@ public partial class ItemDetails : ContentPage, INotifyPropertyChanged
     private void InitializeData()
     {
         ItemImages = new ObservableCollection<string>();
-        Categories = new ObservableCollection<Categorie>();
+       // Categories = new ObservableCollection<Categorie>();
         SimilarItems = new ObservableCollection<ListerItemResult>();
        
     }
@@ -134,7 +134,7 @@ public partial class ItemDetails : ContentPage, INotifyPropertyChanged
         if (_listerId > 0 && _itemId > 0)
         {
             await LoadItemDetailsAsync();
-            await LoadCategoriesAsync();
+           // await LoadCategoriesAsync();
             await LoadSimilarItemsAsync();
         }
     }
@@ -206,35 +206,35 @@ public partial class ItemDetails : ContentPage, INotifyPropertyChanged
     }
 
 
-    private async Task LoadCategoriesAsync()
-    {
-        try
-        {
-            var apiResponse = await _guestServices.GetAllCategoriesAsync();
+    //private async Task LoadCategoriesAsync()
+    //{
+    //    try
+    //    {
+    //        var apiResponse = await _guestServices.GetAllCategoriesAsync();
 
-            if (apiResponse != null && apiResponse.ResponseCode == "000" && apiResponse.CategoriesList != null)
-            {
-                Categories.Clear();
-                foreach (var category in apiResponse.CategoriesList)
-                {
-                    Categories.Add(category);
-                }
+    //        if (apiResponse != null && apiResponse.ResponseCode == "000" && apiResponse.CategoriesList != null)
+    //        {
+    //            Categories.Clear();
+    //            foreach (var category in apiResponse.CategoriesList)
+    //            {
+    //                Categories.Add(category);
+    //            }
 
-                if (ItemData?.CategoryId.HasValue == true)
-                {
-                    SelectedCategory = Categories.FirstOrDefault(c => c.Id == ItemData.CategoryId.Value);
-                }
-            }
-            else
-            {
-                LoadFallbackCategories();
-            }
-        }
-        catch (Exception ex)
-        {
-            LoadFallbackCategories();
-        }
-    }
+    //            if (ItemData?.CategoryId.HasValue == true)
+    //            {
+    //                SelectedCategory = Categories.FirstOrDefault(c => c.Id == ItemData.CategoryId.Value);
+    //            }
+    //        }
+    //        else
+    //        {
+    //            LoadFallbackCategories();
+    //        }
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        LoadFallbackCategories();
+    //    }
+    //}
 
     private async Task LoadSimilarItemsAsync()
     {
@@ -253,16 +253,7 @@ public partial class ItemDetails : ContentPage, INotifyPropertyChanged
                     .Take(5)
                     .ToList();
 
-                //foreach (var item in similarItems)
-                //{
-                //    if (string.IsNullOrEmpty(item.Location))
-                //        item.Location = "Noida";
-
-                //    // Add dummy images for similar items
-                //    item.Images = GetDummyImagesForCategory(item.CategoryId ?? 0);
-
-                //    SimilarItems.Add(item);
-                //}
+                
                 foreach (var item in similarItems)
                 {
                     if (string.IsNullOrEmpty(item.Location))
@@ -290,14 +281,14 @@ public partial class ItemDetails : ContentPage, INotifyPropertyChanged
         }
     }
 
-    private void LoadFallbackCategories()
-    {
-        Categories.Clear();
-        Categories.Add(new Categorie { Id = 1, CategoriesName = "Laptop/Desktop", Status = true });
-        Categories.Add(new Categorie { Id = 2, CategoriesName = "Others", Status = true });
-        Categories.Add(new Categorie { Id = 3, CategoriesName = "Drone", Status = true });
-        Categories.Add(new Categorie { Id = 4, CategoriesName = "Clothes", Status = true });
-    }
+    //private void LoadFallbackCategories()
+    //{
+    //    Categories.Clear();
+    //    Categories.Add(new Categorie { Id = 1, CategoriesName = "Laptop/Desktop", Status = true });
+    //    Categories.Add(new Categorie { Id = 2, CategoriesName = "Others", Status = true });
+    //    Categories.Add(new Categorie { Id = 3, CategoriesName = "Drone", Status = true });
+    //    Categories.Add(new Categorie { Id = 4, CategoriesName = "Clothes", Status = true });
+    //}
 
     private void LoadFallbackItemData()
     {
