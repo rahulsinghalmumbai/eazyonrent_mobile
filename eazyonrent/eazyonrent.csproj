@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net8.0-android;net8.0-ios;net8.0-maccatalyst</TargetFrameworks>
+		<!--<TargetFrameworks>net8.0-android;net8.0-ios;net8.0-maccatalyst</TargetFrameworks>-->
+		<TargetFrameworks>net9.0-android;net9.0-ios;net9.0-maccatalyst</TargetFrameworks>
 		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
 		<!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
 		<!-- <TargetFrameworks>$(TargetFrameworks);net8.0-tizen</TargetFrameworks> -->
@@ -24,14 +25,15 @@
 		<ApplicationTitle>eazyonrent</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.eazyonrent</ApplicationId>
+		<ApplicationId>eazyonrent</ApplicationId>
 
 		<!-- Versions -->
-		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
-		<ApplicationVersion>1</ApplicationVersion>
+		<!--<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+		<ApplicationVersion>1</ApplicationVersion>-->
 
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">11.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">13.1</SupportedOSPlatformVersion>
+		<TargetFrameworkVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">v35.0</TargetFrameworkVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
@@ -86,5 +88,25 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>
+	<!-- 🔐 SIGNING SETUP FOR RELEASE APK/AAB -->
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
 
+		<!-- Versions -->
+		<ApplicationVersion>2</ApplicationVersion>
+		<VersionCode>2</VersionCode>
+		<ApplicationDisplayVersion>1.0.1</ApplicationDisplayVersion>
+
+		<AndroidKeyStore>true</AndroidKeyStore>
+		<AndroidSigningKeyStore>key.keystore</AndroidSigningKeyStore>
+		<AndroidSigningKeyAlias>ReachConnect</AndroidSigningKeyAlias>
+		<AndroidSigningKeyPass>raz#9540</AndroidSigningKeyPass>
+		<AndroidSigningStorePass>raz#9540</AndroidSigningStorePass>
+
+		<!--for setting the key and make bundle
+		keytool -genkey -v -keystore key.keystore -alias ReachConnect -keyalg RSA -keysize 2048 -validity 10000
+		dotnet publish -f net9.0-android -c Release /p:AndroidPackageFormat=aab-->
+
+
+
+	</PropertyGroup>
 </Project>

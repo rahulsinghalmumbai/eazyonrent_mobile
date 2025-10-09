@@ -56,21 +56,25 @@ namespace eazyonrent.Services
 
 
         // Updated Image Upload Method - Direct file upload
-      
-public async Task<AddItemImagesResponse?> UploadItemImages(
-    int listerItemId,
-    List<Stream> imageFiles,
-    List<string>? fileNames = null)
+
+        public async Task<AddItemImagesResponse?> UploadItemImages(
+            int listerItemId,
+            List<Stream> imageFiles,
+            List<string>? fileNames = null)
         {
             try
             {
                 var url = $"{Endpoints.AddItmeImages}";
-
                 using var content = new MultipartFormDataContent();
 
+                // Remove hardcoded values or make them dynamic
                 content.Add(new StringContent("0"), "ImageId");
                 content.Add(new StringContent(listerItemId.ToString()), "ListerItemId");
-                content.Add(new StringContent("string"), "ImageName"); 
+
+                string imageName = fileNames != null && fileNames.Count > 0
+                    ? string.Join(",", fileNames)
+                    : "string";
+                content.Add(new StringContent(imageName), "ImageName");
 
                 for (int i = 0; i < imageFiles.Count; i++)
                 {
@@ -82,10 +86,9 @@ public async Task<AddItemImagesResponse?> UploadItemImages(
 
                     string fileName = fileNames != null && i < fileNames.Count
                         ? fileNames[i]
-                        : $"upload_{i}";
+                        : $"upload_{i}.jpg";  
 
-                    // Detect mime type based on extension
-                    string extension = Path.GetExtension(fileName)?.ToLower() ?? "";
+                    string extension = Path.GetExtension(fileName)?.ToLower() ?? ".jpg";
                     string mimeType = extension switch
                     {
                         ".jpg" or ".jpeg" => "image/jpeg",
@@ -93,11 +96,10 @@ public async Task<AddItemImagesResponse?> UploadItemImages(
                         ".gif" => "image/gif",
                         ".bmp" => "image/bmp",
                         ".webp" => "image/webp",
-                        _ => "application/octet-stream" 
+                        _ => "image/jpeg"  
                     };
 
                     streamContent.Headers.ContentType = new MediaTypeHeaderValue(mimeType);
-
                     content.Add(streamContent, "ImageFiles", fileName);
                 }
 
@@ -110,10 +112,11 @@ public async Task<AddItemImagesResponse?> UploadItemImages(
                 }
                 else
                 {
+                    var errorContent = await response.Content.ReadAsStringAsync();
                     return new AddItemImagesResponse
                     {
                         ResponseCode = "999",
-                        ResponseMessage = $"Image Upload Failed: {response.ReasonPhrase}"
+                        ResponseMessage = $"Image Upload Failed: {response.StatusCode} - {errorContent}"
                     };
                 }
             }
@@ -126,8 +129,6 @@ public async Task<AddItemImagesResponse?> UploadItemImages(
                 };
             }
         }
-
-
 
     }
 }

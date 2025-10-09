@@ -342,21 +342,20 @@ public partial class AddItemPage : ContentPage, INotifyPropertyChanged
         {
             if (_selectedImageStreams.Count > 0)
             {
-                // Combine all image names
-                string combinedImageNames = string.Join(", ", _selectedImageNames);
-
                 var uploadResponse = await addItemsServices.UploadItemImages(
-                   // imageId: 0,
                     listerItemId: listerItemId,
-                  //  imageName: combinedImageNames,
-                    imageFiles: _selectedImageStreams
-                   // fileNames: _selectedImageNames
+                    imageFiles: _selectedImageStreams,
+                    fileNames: _selectedImageNames  // IMPORTANT: Pass fileNames
                 );
 
                 if (uploadResponse?.ResponseCode != "000")
                 {
                     await DisplayAlert("Warning",
                         $"Item saved but image upload failed: {uploadResponse?.ResponseMessage}", "OK");
+                }
+                else
+                {
+                    await DisplayAlert("Success", "Images uploaded successfully!", "OK");
                 }
             }
         }

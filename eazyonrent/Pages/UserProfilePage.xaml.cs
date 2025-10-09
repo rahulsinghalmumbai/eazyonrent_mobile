@@ -238,14 +238,26 @@ namespace eazyonrent.Pages
         }
         private async void OnItemTapped(object sender, EventArgs e)
         {
-            IsBusy = true;
-            var tappedEventArgs = e as TappedEventArgs;
-            if (tappedEventArgs?.Parameter is ListerItemProfileResult item)
+            try
             {
-                
-                await Navigation.PushAsync(new ItemDetails(item.ListerId, item.ListerItemId));
+                IsBusy = true;
+                var tappedEventArgs = e as TappedEventArgs;
+                if (tappedEventArgs?.Parameter is ListerItemProfileResult item)
+                {
+
+                    await Navigation.PushAsync(new ItemDetails(item.ListerId, item.ListerItemId));
+                    //IsBusy = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Error", $"Failed to open item details: {ex.Message}", "OK");
+            }
+            finally
+            {
                 IsBusy = false;
             }
+
         }
     }
 }
