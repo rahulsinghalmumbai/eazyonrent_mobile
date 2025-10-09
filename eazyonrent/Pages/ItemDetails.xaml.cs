@@ -11,12 +11,12 @@ public partial class ItemDetails : ContentPage, INotifyPropertyChanged
 {
     private ListerItemResult _itemData;
     private ObservableCollection<string> _itemImages;
-    private ObservableCollection<Categorie> _categories;
+
     private ObservableCollection<ListerItemResult> _similarItems;
     private string _currentImage;
     private int _currentImageIndex = 0;
     private double _imageZoom = 1.0;
-    private Categorie _selectedCategory;
+ 
     private bool _isLoading;
 
     private readonly GuestServices _guestServices;
@@ -43,15 +43,6 @@ public partial class ItemDetails : ContentPage, INotifyPropertyChanged
         }
     }
 
-    public ObservableCollection<Categorie> Categories
-    {
-        get => _categories;
-        set
-        {
-            _categories = value;
-            OnPropertyChanged();
-        }
-    }
 
     public ObservableCollection<ListerItemResult> SimilarItems
     {
@@ -78,20 +69,11 @@ public partial class ItemDetails : ContentPage, INotifyPropertyChanged
     public string CompanyName => _itemData?.CompanyName ?? "";
     public string ItemName => _itemData?.ItemName ?? "";
     public string ItemDescription => _itemData?.ItemDescriptions ?? "";
-    public string FormattedCost => _itemData.ItemCost.HasValue ? $"₹{_itemData.ItemCost:N0}" : "Price not available";
+    public string FormattedCost => _itemData?.ItemCost != null ? $"₹{_itemData.ItemCost.Value:N0}" : "Price not available";
     public string FormattedAvailableDate => _itemData?.Availablefrom?.ToString("dd MMM yyyy") ?? "Date not available";
     public int ViewCount => _itemData?.viewCount ?? 0;
 
-    public Categorie SelectedCategory
-    {
-        get => _selectedCategory;
-        set
-        {
-            _selectedCategory = value;
-            OnPropertyChanged();
-        }
-    }
-
+   
     public bool IsLoading
     {
         get => _isLoading;
@@ -115,15 +97,13 @@ public partial class ItemDetails : ContentPage, INotifyPropertyChanged
         _listerId = listerId;
         _itemId = itemId;
         InitializeData();
-        BindingContext = this;
-
-
+       
     }
 
     private void InitializeData()
     {
         ItemImages = new ObservableCollection<string>();
-       // Categories = new ObservableCollection<Categorie>();
+        
         SimilarItems = new ObservableCollection<ListerItemResult>();
        
     }
@@ -131,11 +111,23 @@ public partial class ItemDetails : ContentPage, INotifyPropertyChanged
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        if (_listerId > 0 && _itemId > 0)
+
+        if (_listerId <= 0 || _itemId <= 0)
+        {
+            await DisplayAlert("Error", "Invalid item information.", "OK");
+            await Navigation.PopAsync();
+            return;
+        }
+
+        try
         {
             await LoadItemDetailsAsync();
-           // await LoadCategoriesAsync();
             await LoadSimilarItemsAsync();
+            BindingContext = this;
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", $"Failed to load page: {ex.Message}", "OK");
         }
     }
 
@@ -206,42 +198,18 @@ public partial class ItemDetails : ContentPage, INotifyPropertyChanged
     }
 
 
-    //private async Task LoadCategoriesAsync()
-    //{
-    //    try
-    //    {
-    //        var apiResponse = await _guestServices.GetAllCategoriesAsync();
-
-    //        if (apiResponse != null && apiResponse.ResponseCode == "000" && apiResponse.CategoriesList != null)
-    //        {
-    //            Categories.Clear();
-    //            foreach (var category in apiResponse.CategoriesList)
-    //            {
-    //                Categories.Add(category);
-    //            }
-
-    //            if (ItemData?.CategoryId.HasValue == true)
-    //            {
-    //                SelectedCategory = Categories.FirstOrDefault(c => c.Id == ItemData.CategoryId.Value);
-    //            }
-    //        }
-    //        else
-    //        {
-    //            LoadFallbackCategories();
-    //        }
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        LoadFallbackCategories();
-    //    }
-    //}
-
     private async Task LoadSimilarItemsAsync()
     {
         try
         {
+            if (ItemData == null || !ItemData.CategoryId.HasValue)
+            {
+                LoadFallbackSimilarItems();
+                return;
+            }
             // Load similar items from your existing guest service
-            var apiResponse = await _guestServices.LoadSimilarItemsAsync(SelectedCategory.Id);
+            // var apiResponse = await _guestServices.LoadSimilarItemsAsync(SelectedCategory.Id);
+            var apiResponse = await _guestServices.LoadSimilarItemsAsync(ItemData.CategoryId.Value);
 
             if (apiResponse != null && apiResponse.ResponseCode == "000" && apiResponse.ItemList != null)
             {
@@ -281,15 +249,7 @@ public partial class ItemDetails : ContentPage, INotifyPropertyChanged
         }
     }
 
-    //private void LoadFallbackCategories()
-    //{
-    //    Categories.Clear();
-    //    Categories.Add(new Categorie { Id = 1, CategoriesName = "Laptop/Desktop", Status = true });
-    //    Categories.Add(new Categorie { Id = 2, CategoriesName = "Others", Status = true });
-    //    Categories.Add(new Categorie { Id = 3, CategoriesName = "Drone", Status = true });
-    //    Categories.Add(new Categorie { Id = 4, CategoriesName = "Clothes", Status = true });
-    //}
-
+    
     private void LoadFallbackItemData()
     {
         ItemData = new ListerItemResult

@@ -121,18 +121,19 @@
     </ContentPage>
 
     <!-- Item Tab -->
+    <!-- Item Tab -->
     <ContentPage Title="Item" IconImageSource="items.png">
         <ScrollView Padding="15">
             <CollectionView x:Name="MyCollectionView"
-                        ItemsSource="{Binding ItemList}">
+                    ItemsSource="{Binding ItemList}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Frame Margin="0,0,0,12"
-                           Padding="15"
-                           BackgroundColor="White"
-                           HasShadow="True"
-                           CornerRadius="12"
-                           HeightRequest="160">
+                       Padding="15"
+                       BackgroundColor="White"
+                       HasShadow="True"
+                       CornerRadius="12"
+                       HeightRequest="160">
 
                             <Grid ColumnSpacing="15" VerticalOptions="Center">
                                 <Grid.ColumnDefinitions>
@@ -142,54 +143,70 @@
 
                                 <!-- Image Carousel -->
                                 <Frame Grid.Column="0"
-                                   Padding="0"
-                                   CornerRadius="8"
-                                   HasShadow="False"
-                                   HeightRequest="110"
-                                   WidthRequest="120"
-                                   BackgroundColor="#f5f5f5"
-                                   HorizontalOptions="Center"
-                                   VerticalOptions="Center">
+                               Padding="0"
+                               CornerRadius="8"
+                               HasShadow="False"
+                               HeightRequest="110"
+                               WidthRequest="120"
+                               BackgroundColor="#f5f5f5"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center">
 
-                                    <Image Source="{Binding ItemImageList[0].ImageName}" 
-                                           Aspect="AspectFill"
-                                           WidthRequest="120"
-                                           HeightRequest="110"/>
+                                    <Grid>
+                                        <CarouselView ItemsSource="{Binding ItemImageList}"
+                                                  HeightRequest="110"
+                                                  WidthRequest="120"
+                                                  Loop="True"
+                                                  PeekAreaInsets="0">
+                                            <CarouselView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Image Source="{Binding ImageName}"
+                                                       Aspect="AspectFill"
+                                                       WidthRequest="120"
+                                                       HeightRequest="110"/>
+                                                </DataTemplate>
+                                            </CarouselView.ItemTemplate>
+                                        </CarouselView>
+
+                                        <!-- Image Indicator -->
+                                        <IndicatorView IndicatorColor="LightGray"
+                                                   SelectedIndicatorColor="#4a6fc7"
+                                                   HorizontalOptions="Center"
+                                                   VerticalOptions="End"
+                                                   Margin="0,0,0,10"
+                                                   IndicatorSize="6"
+                                                   ItemsSource="{Binding ItemImageList}"/>
+                                    </Grid>
                                 </Frame>
 
                                 <!-- Item Details -->
                                 <StackLayout Grid.Column="1" Spacing="1" VerticalOptions="Center" Margin="10,0,0,0">
                                     <Label Text="{Binding ItemName}"
-                                           FontSize="16"
-                                           FontAttributes="Bold"
-                                           TextColor="#328ea8"
-                                           LineBreakMode="TailTruncation"/>
+                                       FontSize="16"
+                                       FontAttributes="Bold"
+                                       TextColor="#328ea8"
+                                       LineBreakMode="TailTruncation"/>
 
                                     <!--<Label Text="{Binding CompanyName}"
-                                           FontSize="13"
-                                           TextColor="#32a852"
-                                           LineBreakMode="TailTruncation"/>-->
+                                       FontSize="13"
+                                       TextColor="#32a852"
+                                       LineBreakMode="TailTruncation"/>-->
 
                                     <Label Text="{Binding ItemDescriptions}"
-                                           FontSize="12"
-                                           TextColor="#888"
-                                           LineBreakMode="TailTruncation"
-                                           MaxLines="1"/>
+                                       FontSize="12"
+                                       TextColor="#888"
+                                       LineBreakMode="TailTruncation"
+                                       MaxLines="1"/>
 
-                                    <Label Text="{Binding ItemCost, StringFormat='₹{0:F2}'}"
-                                           FontSize="15"
-                                           FontAttributes="Bold"
-                                           TextColor="#ff0000"
-                                           HorizontalOptions="End"
-                                           Margin="0,0,0,0"/>
+
                                 </StackLayout>
                             </Grid>
 
                             <!-- Tap Gesture -->
                             <Frame.GestureRecognizers>
                                 <TapGestureRecognizer 
-                                    Tapped="OnItemTapped"
-                                    CommandParameter="{Binding .}"/>
+                                Tapped="OnItemTapped"
+                                CommandParameter="{Binding .}"/>
                             </Frame.GestureRecognizers>
                         </Frame>
                     </DataTemplate>
@@ -278,7 +295,7 @@
                                                  Grid.Column="1" 
                                                  Spacing="6" 
                                                  VerticalOptions="Center" 
-                                                 Margin="10,0,0,0">
+                                                 Margin="5,-10,0,0">
 
                                         <Label Text="{Binding companyName}"
                                                FontSize="16"
