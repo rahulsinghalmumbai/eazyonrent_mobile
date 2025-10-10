@@ -17,12 +17,12 @@ public partial class LoginPage : ContentPage
         {
             LoginButton.Text = "Logging in...";
             await Task.Delay(100);
-
+             
           
             var loginResult = await loginServices.LoginAsync(PasswordEntry.Text.Trim());
             if (loginResult != null && loginResult.ResponseCode == "200")
             {
-                await SecureStorage.SetAsync("mobile", PasswordEntry.Text.Trim());
+                await SecureStorage.SetAsync("mobile", PasswordEntry.Text.Trim()); 
 
 
                 await SecureStorage.SetAsync("ListerId", loginResult.ExistUser.ListerId.ToString());
