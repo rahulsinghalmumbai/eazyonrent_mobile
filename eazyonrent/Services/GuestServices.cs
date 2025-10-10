@@ -50,7 +50,9 @@ namespace eazyonrent.Services
         {
             try
             {
-                var response = await _httpClient.GetAsync("Categories/GellALLCategories");
+                //var response = await _httpClient.GetAsync("Categories/GellALLCategories");
+                var url = $"{Endpoints.GetAllCat}";
+                var response = await _httpClient.GetAsync(url);
 
                 if (!response.IsSuccessStatusCode)
                     return null;

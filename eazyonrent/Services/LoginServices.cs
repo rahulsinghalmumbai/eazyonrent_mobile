@@ -123,9 +123,10 @@ namespace eazyonrent.Services
                 var url = $"{Endpoints.ProfileItem}?ListerId={listerId}";
 
                 var response = await _httpClient.GetAsync(url); 
-                response.EnsureSuccessStatusCode();
+                response.EnsureSuccessStatusCode();  
 
-                var responseBody = await response.Content.ReadAsStringAsync();
+                var responseBody = await response.Content.ReadAsStringAsync();     
+
 
                 var options = new JsonSerializerOptions
                 {

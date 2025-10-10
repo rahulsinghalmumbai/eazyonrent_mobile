@@ -131,9 +131,11 @@ namespace eazyonrent.Pages
                                 {
                                     // Convert local file path to URL
                                     // Extract filename from the path
+                                    // Extract filename from the path
                                     var fileName = Path.GetFileName(image.ImageName);
                                     //image.ImageName = $"https://yourdomain.com/itemimages/{fileName}";
-                                    image.ImageName = $"https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400";
+                                   // image.ImageName = $"https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400";
+                                    image.ImageName = image.ImageName;
                                 }
                             }
                         }
