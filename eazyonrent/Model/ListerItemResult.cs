@@ -26,6 +26,9 @@ namespace eazyonrent.Model
         public DateTime? UpdatedOn { get; set; }
         public int? CategoryId { get; set; }
 
+        //public int? CategoryId { get; set; }
+        public string? CategoryName { get; set; }
+
         // Additional properties for UI
         public string Location
         {

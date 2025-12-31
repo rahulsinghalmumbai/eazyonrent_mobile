@@ -365,12 +365,18 @@ public partial class ItemDetails : ContentPage, INotifyPropertyChanged
     {
         try
         {
-            await DisplayAlert("Chat", $"Opening chat with {CompanyName}...", "OK");
+            IsBusy = true;
+           // await DisplayAlert("Chat", $"Opening chat with {CompanyName}...", "OK");
+            await Navigation.PushAsync(new UserChatPage());
             // Navigate to chat page: await Shell.Current.GoToAsync($"//chat?listerId={_listerId}");
         }
         catch (Exception ex)
         {
             await DisplayAlert("Error", "Unable to open chat. Please try again.", "OK");
+        }
+        finally
+        {
+            IsBusy = false;
         }
     }
 
@@ -378,13 +384,19 @@ public partial class ItemDetails : ContentPage, INotifyPropertyChanged
     {
         try
         {
-            await DisplayAlert("Book Now", $"Booking {ItemName}...", "OK");
-            await Navigation.PushAsync(new BookItemPage(_itemId, _listerId));
+            IsBusy = true;
+            //await DisplayAlert("Book Now", $"Booking {ItemName}...", "OK");
+            await Navigation.PushAsync(new BookItemPage(_itemId, _listerId, ItemName));
+            
             // Navigate to booking page: await Shell.Current.GoToAsync($"//booking?itemId={_itemId}&listerId={_listerId}");
         }
         catch (Exception ex)
         {
             await DisplayAlert("Error", "Unable to proceed with booking. Please try again.", "OK");
+        }
+        finally
+        {
+            IsBusy = false;
         }
     }
 
@@ -409,7 +421,6 @@ public partial class ItemDetails : ContentPage, INotifyPropertyChanged
             OnPropertyChanged(nameof(ImageCounterText));
         }
     }
-
     public void NavigateToPreviousImage()
     {
         if (ItemImages?.Count > 0)

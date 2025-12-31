@@ -266,7 +266,7 @@
                 </StackLayout>
 
                 <!-- Orders/Bookings Button -->
-                <StackLayout Grid.Column="3" 
+                <!--<StackLayout Grid.Column="3" 
                              Spacing="2"
                              VerticalOptions="Center">
                     <StackLayout.GestureRecognizers>
@@ -282,7 +282,7 @@
                            HorizontalOptions="Center" 
                            TextColor="#666"
                            FontAttributes="Bold"/>
-                </StackLayout>
+                </StackLayout>-->
 
                 <!-- Profile Button -->
                 <StackLayout Grid.Column="4" 

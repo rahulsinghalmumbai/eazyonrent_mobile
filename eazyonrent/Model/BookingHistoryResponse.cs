@@ -1,43 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace eazyonrent.Model
 {
-    public class BookingHistoryResponse
+    // API Response Model
+    public class BookedItemHistoryResponse
     {
-        public string ResponseCode { get; set; }
-        public string ResponseMessage { get; set; }
-        public List<BookingHistoryItem> HistoryList { get; set; }
+        public string responseCode { get; set; }
+        public string responseMessage { get; set; }
+        public List<BookedItemHistory> data { get; set; }
     }
-    public class BookingHistoryItem
-    {
-        public int renterItemId { get; set; }
-        public int listerId { get; set; }
-        public string companyName { get; set; }
-        public int rating { get; set; }
-        public string review { get; set; }
-        public string itemName { get; set; }
-        public int itemId { get; set; }
-        public DateTime rentFromDate { get; set; }
-        public DateTime rentToDate { get; set; }
-        public bool status { get; set; }
-        public List<ItemImageHistory> itemImageList { get; set; }
 
-        // Formatted properties for display
-        public string FormattedFromDate => rentFromDate.ToString("dd MMM yyyy");
-        public string FormattedToDate => rentToDate.ToString("dd MMM yyyy");
-        public string DateRange => $"{FormattedFromDate} - {FormattedToDate}";
-        public string StatusText => status ? "Active" : "Completed";
-        public string StatusColor => status ? "#4CAF50" : "#9E9E9E";
-    }
-    public class ItemImageHistory
+    public class BookedItemHistory
     {
-        public int imageId { get; set; }
-        public int? listerItemId { get; set; }
-        public string imageName { get; set; }
-        public object imageFiles { get; set; }
+        public int RenterItemId { get; set; }
+        public int? RenterId { get; set; }
+        public int? ItemId { get; set; }
+        public DateTime? RentFromDate { get; set; }
+        public DateTime? RentToDate { get; set; }
+        public bool? BookingStatus { get; set; }
+        public string ItemName { get; set; }
+        public decimal? ItemCost { get; set; }
+        public string ItemDescriptions { get; set; }
+        public int? ListerId { get; set; }
+        public string ListerName { get; set; }
+        public string CompanyName { get; set; }
+        public List<string> ItemImages { get; set; } = new List<string>();
+        public int? Rating { get; set; }
+        public string Review { get; set; }
+
+        public string FormattedFromDate => (RentFromDate ?? DateTime.MinValue).ToString("dd MMM yyyy");
+        public string FormattedToDate => (RentToDate ?? DateTime.MinValue).ToString("dd MMM yyyy");
+        public string DateRange => $"{FormattedFromDate} - {FormattedToDate}";
+        public string StatusText => (BookingStatus ?? false) ? "Active" : "Completed";
+        public string StatusColor => (BookingStatus ?? false) ? "#4CAF50" : "#9E9E9E";
     }
 }

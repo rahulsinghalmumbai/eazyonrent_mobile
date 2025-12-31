@@ -16,6 +16,6 @@ namespace eazyonrent.Model
         public string? Address { get; set; }
         public string? City { get; set; }
         //public string? DefaultImage { get; set; }
-        public FileResult? DefaultImage { get; set; }
+        public FileResult? ImageFile { get; set; }
     }
 }

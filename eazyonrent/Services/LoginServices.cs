@@ -3,6 +3,8 @@ using eazyonrent.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -56,67 +58,110 @@ namespace eazyonrent.Services
                 };
             }
         }
-        public async Task<ListerModel> UpdateProfileAsync(ListerUpdateRequest request)
+        
+
+
+
+public async Task<ListerModel> UpdateProfileAsync(ListerUpdateRequest request)
+    {
+        try
         {
-            try
+            using var form = new MultipartFormDataContent();
+
+
+            // Normal fields (match server model property names exactly)
+            form.Add(new StringContent(request.ListerId?.ToString() ?? ""), "ListerId");
+            form.Add(new StringContent(request.CompanyName ?? ""), "CompanyName");
+            form.Add(new StringContent(request.Address ?? ""), "Address");
+            form.Add(new StringContent(request.Email ?? ""), "Email");
+            form.Add(new StringContent(request.Name ?? ""), "Name");
+            form.Add(new StringContent(request.City ?? ""), "City");
+            form.Add(new StringContent( request.Mobile ?? ""), "Mobile");
+
+            // File upload (safe: read into memory first)
+            if (request.ImageFile is FileResult file && !string.IsNullOrWhiteSpace(file.FileName))
             {
-                using var form = new MultipartFormDataContent();
-
-                // Normal fields (query me na bhejke form-data me bhej dete hai)
-                form.Add(new StringContent(request.ListerId.ToString()), "ListerId");
-                form.Add(new StringContent(request.CompanyName ?? ""), "CompanyName");
-                form.Add(new StringContent(request.Address ?? ""), "Address");
-                form.Add(new StringContent(request.Email ?? ""), "Email");
-                form.Add(new StringContent(request.Name ?? ""), "Name");
-                form.Add(new StringContent(request.City ?? ""), "City");
-
-                // File handle kare
-                if (request.DefaultImage is FileResult file)
+                var fileName = Path.GetFileName(file.FileName);
+                if (string.IsNullOrWhiteSpace(fileName))
                 {
-                    using var stream = await file.OpenReadAsync();
-                    var fileContent = new StreamContent(stream);
-                    string mimeType = file.FileName.ToLower() switch
-                    {
-                        string name when name.EndsWith(".jpg") || name.EndsWith(".jpeg") => "image/jpeg",
-                        string name when name.EndsWith(".png") => "image/png",
-                        string name when name.EndsWith(".gif") => "image/gif",
-                        string name when name.EndsWith(".bmp") => "image/bmp",
-                        string name when name.EndsWith(".webp") => "image/webp",
-                        _ => "application/octet-stream" 
-                    };
-                    fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(mimeType);
-
-                    form.Add(fileContent, "ImageFile", file.FileName);
+                    fileName = $"image_{Guid.NewGuid()}";
                 }
 
-                var response = await _httpClient.PostAsync(Endpoints.EditProfile, form);
-                response.EnsureSuccessStatusCode();
+                // Read file bytes into memory
+                using var inStream = await file.OpenReadAsync();
+                using var ms = new MemoryStream();
+                await inStream.CopyToAsync(ms);
+                var bytes = ms.ToArray();
 
-                var responseBody = await response.Content.ReadAsStringAsync();
+                var fileContent = new ByteArrayContent(bytes);
 
-                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                var result = JsonSerializer.Deserialize<ListerModel>(responseBody, options);
-
-                return result ?? new ListerModel
+                // determine mime type by extension (fallback to octet-stream)
+                var ext = Path.GetExtension(fileName)?.ToLowerInvariant() ?? ".jpg";
+                var mimeType = ext switch
                 {
-                    ResponseCode = "500",
-                    ResponseMessage = "Empty response",
-                    ExistUser = null
+                    ".jpg" or ".jpeg" => "image/jpeg",
+                    ".png" => "image/png",
+                    ".gif" => "image/gif",
+                    ".webp" => "image/webp",
+                    ".bmp" => "image/bmp",
+                    _ => "application/octet-stream"
                 };
+
+                fileContent.Headers.ContentType = new MediaTypeHeaderValue(mimeType);
+                // optional: explicit content-disposition
+                fileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
+                {
+                    Name = "\"ImageFile\"",
+                    FileName = $"\"{fileName}\""
+                };
+
+                // name must match API property: "ImageFile"
+                form.Add(fileContent, "ImageFile", fileName);
             }
-            catch (Exception ex)
+
+            // Send request
+            var response = await _httpClient.PostAsync(Endpoints.EditProfile, form);
+
+            // Read response body for both success and error (helps debugging)
+            var responseBody = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
             {
-                Console.WriteLine("UpdateProfile API Exception: " + ex.Message);
+                // Log full error details for debugging (console / debug window)
+                Console.WriteLine($"UpdateProfile failed: {(int)response.StatusCode} {response.ReasonPhrase}");
+                Console.WriteLine("Response body: " + responseBody);
+
                 return new ListerModel
                 {
-                    ResponseCode = "500",
-                    ResponseMessage = "Exception occurred",
-                    ExistUser = null
+                    ResponseCode = ((int)response.StatusCode).ToString(),
+                    ResponseMessage = !string.IsNullOrWhiteSpace(responseBody) ? responseBody : response.ReasonPhrase
                 };
             }
-        }
 
-        public async Task<ListerItemProfileResponse> OnLoadProfileItem(int? listerId)
+            // Deserialize success response
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var result = JsonSerializer.Deserialize<ListerModel>(responseBody, options);
+
+            return result ?? new ListerModel
+            {
+                ResponseCode = "500",
+                ResponseMessage = "Empty response",
+            };
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("UpdateProfile API Exception: " + ex.ToString());
+            return new ListerModel
+            {
+                ResponseCode = "500",
+                ResponseMessage = "Exception occurred: " + ex.Message
+            };
+        }
+    }
+
+
+
+    public async Task<ListerItemProfileResponse> OnLoadProfileItem(int? listerId)
         {
             try
             {
@@ -153,16 +198,19 @@ namespace eazyonrent.Services
             }
         }
 
-        public async Task<List<BookingHistoryItem>> GetBookingHistoryAsync(int? listerId)
+        public async Task<BookedItemHistoryResponse> GetBookingHistoryAsync(int? listerId)
         {
             try
             {
                 if (!listerId.HasValue)
                 {
-                    return new List<BookingHistoryItem>();
+                    return new BookedItemHistoryResponse
+                    {
+                        responseCode = "400",
+                        responseMessage = "ListerId is required"
+                    };
                 }
 
-               // var url = $"https://eazyonrent.com/api/Lister/bookHistory?ListerId={32}";
                 var url = $"{Endpoints.HistoryItme}?ListerId={listerId}";
 
                 var response = await _httpClient.GetAsync(url);
@@ -170,16 +218,35 @@ namespace eazyonrent.Services
                 if (response.IsSuccessStatusCode)
                 {
                     var content = await response.Content.ReadAsStringAsync();
-                    var historyList = JsonSerializer.Deserialize<List<BookingHistoryItem>>(content);
-                    return historyList ?? new List<BookingHistoryItem>();
+
+                    // JsonSerializerOptions use karein jo case-insensitive ho
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    };
+
+                    var historyResponse = JsonSerializer.Deserialize<BookedItemHistoryResponse>(content, options);
+                    return historyResponse ?? new BookedItemHistoryResponse
+                    {
+                        responseCode = "500",
+                        responseMessage = "Failed to deserialize response"
+                    };
                 }
 
-                return new List<BookingHistoryItem>();
+                return new BookedItemHistoryResponse
+                {
+                    responseCode = ((int)response.StatusCode).ToString(),
+                    responseMessage = "Failed to load history"
+                };
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error loading booking history: {ex.Message}");
-                return new List<BookingHistoryItem>();
+                return new BookedItemHistoryResponse
+                {
+                    responseCode = "500",
+                    responseMessage = ex.Message
+                };
             }
         }
 

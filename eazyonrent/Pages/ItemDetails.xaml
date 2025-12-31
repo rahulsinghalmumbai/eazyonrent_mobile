@@ -120,7 +120,7 @@
                     <VerticalStackLayout Spacing="15">
                         <VerticalStackLayout Spacing="5">
                             <Label Text="Category Name:" FontSize="14" TextColor="#666"/>
-                            <Label Text="{Binding ItemData.CategoryId}" FontSize="18" FontAttributes="Bold" TextColor="#333"/>
+                            <Label Text="{Binding ItemData.CategoryName}" FontSize="18" FontAttributes="Bold" TextColor="#333"/>
                         </VerticalStackLayout>
 
                         <!-- Company Name -->

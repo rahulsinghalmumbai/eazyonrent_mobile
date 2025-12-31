@@ -194,7 +194,7 @@ public partial class GuesPage : ContentPage, INotifyPropertyChanged
             3 => new List<string> // Vehicles
             {
                 "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400",
-                "https://images.unsplash.com/photo-1571068316344-75bc76f77890?w=400"
+                "https://tse4.mm.bing.net/th/id/OIP.WRJhX-iK8WZcXn4HSa1-iwHaEW?pid=ImgDet&w=474&h=278&rs=1&o=7&rm=3"
             },
             _ => new List<string> // Default
             {
@@ -262,7 +262,7 @@ public partial class GuesPage : ContentPage, INotifyPropertyChanged
     {
         SearchEntry.Focus();
         await DisplayAlert("Navigation", "Search clicked!", "OK");
-
+           
     }
     private async void OnAddItemClicked(object sender, EventArgs e)
     {

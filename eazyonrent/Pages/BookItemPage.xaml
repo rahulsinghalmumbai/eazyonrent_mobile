@@ -103,7 +103,7 @@
                                Padding="10"
                                HasShadow="False">
                                 <DatePicker x:Name="RentFromDatePicker"
-                                        Format="dd/MM/yyyy"
+                                        Format="dd-MMM-yyyy"
                                         BackgroundColor="Transparent"
                                         TextColor="Black"/>
                             </Frame>
@@ -121,7 +121,7 @@
                                Padding="10"
                                HasShadow="False">
                                 <DatePicker x:Name="RentToDatePicker"
-                                        Format="dd/MM/yyyy"
+                                        Format="dd-MMM-yyyy"
                                         BackgroundColor="Transparent"
                                         TextColor="Black"/>
                             </Frame>
@@ -158,7 +158,7 @@
 
                     <!-- Book Now Button -->
                     <Button x:Name="BookNowButton"
-                        Text="BOOK NOW" 
+                        Text="FINAL BOOKING" 
                         FontSize="18"
                         FontAttributes="Bold"
                         BackgroundColor="{DynamicResource Primary}"
