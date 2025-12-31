@@ -84,6 +84,9 @@
 	  <MauiXaml Update="Pages\LoginPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Pages\UserChatPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Pages\UserProfilePage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -92,9 +95,9 @@
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
 
 		<!-- Versions -->
-		<ApplicationVersion>2</ApplicationVersion>
-		<VersionCode>2</VersionCode>
-		<ApplicationDisplayVersion>1.0.1</ApplicationDisplayVersion>
+		<ApplicationVersion>6</ApplicationVersion>
+		<VersionCode>6</VersionCode>
+		<ApplicationDisplayVersion>1.0.6</ApplicationDisplayVersion>
 
 		<AndroidKeyStore>true</AndroidKeyStore>
 		<AndroidSigningKeyStore>key.keystore</AndroidSigningKeyStore>

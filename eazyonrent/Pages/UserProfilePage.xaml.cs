@@ -1,6 +1,11 @@
 ﻿using eazyonrent.Model;
 using eazyonrent.Services;
-
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
+using Microsoft.Maui.Controls;
+using Microsoft.Maui.Storage;
 
 namespace eazyonrent.Pages
 {
@@ -9,6 +14,7 @@ namespace eazyonrent.Pages
         private readonly LoginServices loginServices;
         private int? _currentListerId;
         private FileResult _selectedImageFile;
+
         public UserProfilePage()
         {
             InitializeComponent();
@@ -17,6 +23,7 @@ namespace eazyonrent.Pages
             // Subscribe to tab selection change event
             this.CurrentPageChanged += OnCurrentPageChanged;
         }
+
         protected override async void OnAppearing()
         {
             base.OnAppearing();
@@ -56,9 +63,7 @@ namespace eazyonrent.Pages
                     // Profile Image
                     if (!string.IsNullOrEmpty(response.ExistUser.DefaultImage))
                     {
-                        ProfileImage.Source = ImageSource.FromUri(
-                            new Uri("https://yourdomain.com" + response.ExistUser.DefaultImage)
-                        );
+                        ProfileImage.Source = response.ExistUser.DefaultImage;
                     }
                 }
                 else
@@ -71,6 +76,7 @@ namespace eazyonrent.Pages
                 await DisplayAlert("Error", $"Failed to load profile: {ex.Message}", "OK");
             }
         }
+
         private async void OnSaveProfileData(object sender, EventArgs e)
         {
             try
@@ -85,7 +91,7 @@ namespace eazyonrent.Pages
                     CompanyName = CompanyEntry.Text,
                     Address = AddressEditor.Text,
                     City = CityEntry.Text,
-                    DefaultImage = _selectedImageFile
+                    ImageFile = _selectedImageFile
                 };
 
                 var result = await loginServices.UpdateProfileAsync(updateRequest);
@@ -109,14 +115,12 @@ namespace eazyonrent.Pages
             }
         }
 
-
         private async Task OnLoadItems(object sender, EventArgs e)
         {
             try
             {
                 IsBusy = true;
                 var response = await loginServices.OnLoadProfileItem(_currentListerId);
-                //var response = await loginServices.OnLoadProfileItem(32);
 
                 if (response.ResponseCode == "000" && response.ItemList?.Count > 0)
                 {
@@ -129,12 +133,6 @@ namespace eazyonrent.Pages
                             {
                                 if (!string.IsNullOrEmpty(image.ImageName))
                                 {
-                                    // Convert local file path to URL
-                                    // Extract filename from the path
-                                    // Extract filename from the path
-                                    var fileName = Path.GetFileName(image.ImageName);
-                                    //image.ImageName = $"https://yourdomain.com/itemimages/{fileName}";
-                                   // image.ImageName = $"https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400";
                                     image.ImageName = image.ImageName;
                                 }
                             }
@@ -157,16 +155,19 @@ namespace eazyonrent.Pages
                 IsBusy = false;
             }
         }
+
         private async Task OnLoadHistory(object sender, EventArgs e)
         {
             try
             {
                 IsBusy = true;
-                var historyList = await loginServices.GetBookingHistoryAsync(_currentListerId);
 
-                if (historyList != null && historyList.Count > 0)
+                var historyResponse = await loginServices.GetBookingHistoryAsync(_currentListerId);
+
+                if (historyResponse != null && historyResponse.responseCode == "000" && historyResponse.data?.Count > 0)
                 {
-                    HistoryCollectionView.ItemsSource = historyList;
+                    // Directly use the data from response - no need to create new list
+                    HistoryCollectionView.ItemsSource = historyResponse.data;
                     NoHistoryLabel.IsVisible = false;
                     HistoryCollectionView.IsVisible = true;
                 }
@@ -174,6 +175,10 @@ namespace eazyonrent.Pages
                 {
                     NoHistoryLabel.IsVisible = true;
                     HistoryCollectionView.IsVisible = false;
+                    if (historyResponse != null && !string.IsNullOrEmpty(historyResponse.responseMessage))
+                    {
+                        await DisplayAlert("Info", historyResponse.responseMessage, "OK");
+                    }
                 }
             }
             catch (Exception ex)
@@ -187,15 +192,23 @@ namespace eazyonrent.Pages
                 IsBusy = false;
             }
         }
+
         private async void OnHistoryItemTapped(object sender, EventArgs e)
         {
             try
             {
                 IsBusy = true;
                 var tappedEventArgs = e as TappedEventArgs;
-                if (tappedEventArgs?.Parameter is BookingHistoryItem item)
+                if (tappedEventArgs?.Parameter is BookedItemHistory item)
                 {
-                    await Navigation.PushAsync(new ItemDetails(item.listerId, item.itemId));
+                    if (item.ListerId.HasValue && item.ItemId.HasValue)
+                    {
+                        await Navigation.PushAsync(new ItemDetails(item.ListerId.Value, item.ItemId.Value));
+                    }
+                    else
+                    {
+                        await DisplayAlert("Info", "Item details not available", "OK");
+                    }
                 }
             }
             catch (Exception ex)
@@ -207,6 +220,7 @@ namespace eazyonrent.Pages
                 IsBusy = false;
             }
         }
+
         private async void OnUploadImageClicked(object sender, EventArgs e)
         {
             try
@@ -238,6 +252,7 @@ namespace eazyonrent.Pages
                 await DisplayAlert("Error", $"Failed to upload image: {ex.Message}", "OK");
             }
         }
+
         private async void OnItemTapped(object sender, EventArgs e)
         {
             try
@@ -246,9 +261,7 @@ namespace eazyonrent.Pages
                 var tappedEventArgs = e as TappedEventArgs;
                 if (tappedEventArgs?.Parameter is ListerItemProfileResult item)
                 {
-
                     await Navigation.PushAsync(new ItemDetails(item.ListerId, item.ListerItemId));
-                    //IsBusy = false;
                 }
             }
             catch (Exception ex)
@@ -259,7 +272,6 @@ namespace eazyonrent.Pages
             {
                 IsBusy = false;
             }
-
         }
     }
 }

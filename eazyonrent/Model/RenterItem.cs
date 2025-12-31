@@ -9,7 +9,7 @@ namespace eazyonrent.Model
     public class RenterItem
     {
         public int RenterItemId { get; set; }
-        public int? ListerId { get; set; }
+        public int? RenterID { get; set; }
         public double? Rating { get; set; }
         public string? Review { get; set; }
         public int? ItemId { get; set; }

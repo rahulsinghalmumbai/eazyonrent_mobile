@@ -2,13 +2,16 @@
 using eazyonrent.Services;
 using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace eazyonrent.Pages;
 
 [QueryProperty(nameof(ItemId), "itemId")]
 [QueryProperty(nameof(ListerId), "listerId")]
+[QueryProperty(nameof(ItemName), "itemName")]
 public partial class BookItemPage : ContentPage
 {
+    private string _itemName;
     private int _itemId;
     private int _listerId;
     private int _selectedRating = 0;
@@ -24,13 +27,17 @@ public partial class BookItemPage : ContentPage
     {
         set => _listerId = int.Parse(value ?? "0");
     }
-
-    public BookItemPage(int itemId, int listerId)
+    public string ItemName  
+    {
+        set => _itemName = value;
+    }
+    public BookItemPage(int itemId, int listerId, string itemName = null) 
     {
         InitializeComponent();
         _bookServices = new BookServices();
         _itemId = itemId;
         _listerId = listerId;
+        _itemName = itemName;
         // Set minimum dates to today
         RentFromDatePicker.MinimumDate = DateTime.Today;
         RentToDatePicker.MinimumDate = DateTime.Today;
@@ -41,17 +48,25 @@ public partial class BookItemPage : ContentPage
 
         // Subscribe to date change events
         RentFromDatePicker.DateSelected += OnRentFromDateSelected;
-        RentToDatePicker.DateSelected += OnRentToDateSelected;
+        RentToDatePicker.DateSelected +=  OnRentToDateSelected;
     }
 
     protected override void OnAppearing()
     {
         base.OnAppearing();
 
-        // Update title or any other initialization
-        Title = $"Book Item #{_itemId}";
-    }
+        // Update title with item name
+        if (!string.IsNullOrEmpty(_itemName))
+        {
+            Title = $"Book #{_itemName}";
+        }
+        else
+        {
+            Title = $"Book Item #{_itemId}";
+        }
 
+       
+    }
     // Star Rating Event Handler
     private void OnStarClicked(object sender, EventArgs e)
     {
@@ -97,12 +112,12 @@ public partial class BookItemPage : ContentPage
         RentToDatePicker.MinimumDate = e.NewDate.AddDays(1);
     }
 
-    private void OnRentToDateSelected(object sender, DateChangedEventArgs e)
+    private async void OnRentToDateSelected(object sender, DateChangedEventArgs e)
     {
         // Ensure rent to date is after rent from date
         if (e.NewDate <= RentFromDatePicker.Date)
         {
-            DisplayAlert("Invalid Date", "Rent to date must be after rent from date.", "OK");
+            await DisplayAlert("Invalid Date", "Rent to date must be after rent from date.", "OK");
             RentToDatePicker.Date = RentFromDatePicker.Date.AddDays(1);
         }
     }
@@ -110,7 +125,7 @@ public partial class BookItemPage : ContentPage
     // Main booking method
     private async void OnFinalBookClicked(object sender, EventArgs e)
     {
-        if (!ValidateForm())
+        if (!await ValidateForm())
             return;
 
         try
@@ -119,10 +134,30 @@ public partial class BookItemPage : ContentPage
             LoadingOverlay.IsVisible = true;
             BookNowButton.IsEnabled = false;
 
+            int listerId = 0;
+
+            // First time login id
+            var listerIdFirst = await SecureStorage.GetAsync("ListerIdFirst");
+            // Regular id
+            var listerIdNormal = await SecureStorage.GetAsync("ListerId");
+
+            if (!string.IsNullOrEmpty(listerIdFirst))
+            {
+                // agar first time wala id exist karta hai use karo
+                listerId = int.Parse(listerIdFirst);
+                // ek baar use karne ke baad hata bhi sakte ho (optional)
+                await SecureStorage.SetAsync("ListerIdFirst", "");
+            }
+            else if (!string.IsNullOrEmpty(listerIdNormal))
+            {
+                // otherwise normal wala use karo
+                listerId = int.Parse(listerIdNormal);
+            }
+
             // Prepare booking request model
             var renterItem = new RenterItem
             {
-                ListerId = _listerId,   
+                RenterID = listerId,   
                 ItemId = _itemId,
                 RentFromDate = RentFromDatePicker.Date,
                 RentToDate = RentToDatePicker.Date,
@@ -156,25 +191,25 @@ public partial class BookItemPage : ContentPage
         }
     }
 
-    private bool ValidateForm()
+    private async Task<bool> ValidateForm()
     {
         // Validate item and lister IDs
         if (_itemId <= 0 || _listerId <= 0)
-        {
-            DisplayAlert("Error", "Invalid item or lister information.", "OK");
+        { 
+            await DisplayAlert("Error", "Invalid item or lister information.", "OK");
             return false;
         }
 
         // Validate dates
         if (RentFromDatePicker.Date < DateTime.Today)
         {
-            DisplayAlert("Invalid Date", "Rent from date cannot be in the past.", "OK");
+            await DisplayAlert("Invalid Date", "Rent from date cannot be in the past.", "OK");
             return false;
         }
 
         if (RentToDatePicker.Date <= RentFromDatePicker.Date)
         {
-            DisplayAlert("Invalid Date", "Rent to date must be after rent from date.", "OK");
+            await DisplayAlert("Invalid Date", "Rent to date must be after rent from date.", "OK");
             return false;
         }
 
@@ -182,7 +217,7 @@ public partial class BookItemPage : ContentPage
         var rentalDays = (RentToDatePicker.Date - RentFromDatePicker.Date).Days;
         if (rentalDays > 365)
         {
-            DisplayAlert("Invalid Period", "Rental period cannot exceed 365 days.", "OK");
+            await DisplayAlert("Invalid Period", "Rental period cannot exceed 365 days.", "OK");
             return false;
         }
 

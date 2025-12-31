@@ -254,7 +254,7 @@ public partial class AddItemPage : ContentPage, INotifyPropertyChanged
             SaveButton.IsEnabled = false;
 
             // Validate inputs
-            if (!ValidateInputs())
+            if (!await ValidateInputs())
             {
                 SaveButton.Text = "Save Item";
                 SaveButton.IsEnabled = true;
@@ -327,7 +327,7 @@ public partial class AddItemPage : ContentPage, INotifyPropertyChanged
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", $"An error occurred: {ex.Message}", "OK");
+               await DisplayAlert("Error", $"An error occurred: {ex.Message}", "OK");
         }
         finally
         {
@@ -366,46 +366,46 @@ public partial class AddItemPage : ContentPage, INotifyPropertyChanged
         }
     }
 
-    private bool ValidateInputs()
+    private async Task<bool> ValidateInputs()
     {
         // Validate Category Selection
         if (SelectedCategory == null)
         {
-            DisplayAlert("Validation Error", "Please select a category", "OK");
+            await DisplayAlert("Validation Error", "Please select a category", "OK");
             return false;
         }
 
         // Validate Item Name
         if (string.IsNullOrWhiteSpace(NameEntry.Text))
         {
-            DisplayAlert("Validation Error", "Please enter item name", "OK");
+           await DisplayAlert("Validation Error", "Please enter item name", "OK");
             return false;
         }
 
         // Validate Price
         if (string.IsNullOrWhiteSpace(PriceEntry.Text))
         {
-            DisplayAlert("Validation Error", "Please enter price", "OK");
+           await DisplayAlert("Validation Error", "Please enter price", "OK");
             return false;
         }
 
         if (!decimal.TryParse(PriceEntry.Text, out decimal price) || price <= 0)
         {
-            DisplayAlert("Validation Error", "Please enter valid price", "OK");
+            await DisplayAlert("Validation Error", "Please enter valid price", "OK");
             return false;
         }
 
         // Validate Status Selection
         if (StatusPicker.SelectedIndex == -1)
         {
-            DisplayAlert("Validation Error", "Please select status", "OK");
+            await DisplayAlert("Validation Error", "Please select status", "OK");
             return false;
         }
 
         // Validate Available From Date
         if (AvailableFromPicker.Date < DateTime.Today)
         {
-            DisplayAlert("Validation Error", "Available from date cannot be in the past", "OK");
+            await DisplayAlert("Validation Error", "Available from date cannot be in the past", "OK");
             return false;
         }
 

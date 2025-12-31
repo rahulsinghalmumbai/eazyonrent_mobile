@@ -6,7 +6,6 @@ public partial class CustomToastControl : ContentPage
     {
         InitializeComponent();
     }
-
     public async Task ShowAsync(string message, int duration = 3000)
     {
         ToastLabel.Text = message;
